@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>WebSocket</title>
+</head>
+
+<body>
+	<script>
+		var countR = 0; countB = 0;
+		var tCurrent, tPrev; // variable to calculate the time difference
+		tPrev = new Date().getTime();
+		var ws = new WebSocket("ws://localhost:8000/"),
+			messages = document.createElement('ul');
+		ws.onmessage = function (event) {
+
+			tCurrent = new Date().getTime();
+			var diff = tCurrent - tPrev;
+			tPrev = tCurrent;
+
+			var messages = document.getElementsByTagName('ul')[0],
+				message = document.createElement('li'),
+				content = document.createTextNode(event.data + ' ' + diff);
+			message.appendChild(content);
+
+			if (diff < 2000) {
+				message.style.color = '#FF0000';
+				countR += 1;
+				console.log(countR);
+			}
+
+			else {
+				message.style.color = '#000000';
+				countB += 1;
+				console.log(countB);
+			}
+
+			messages.appendChild(message);
+			if (messages.childElementCount > 10) messages.removeChild(messages.firstChild);
+			document.getElementById("black").innerHTML = countB ;
+			document.getElementById("red").innerHTML = countR;
+		}; 
+		document.body.appendChild(messages);
+	</script>
+	<span id="black" style="font-size: 200px;"></span><span id="red" style="font-size: 200px; color:#FF0000; margin-left:100px"></span>
+</body>
+
+</html>
